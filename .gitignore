@@ -1,0 +1,6 @@
+update.sh
+__pycache__/
+*.py[cod]
+
+*.npz
+*.h5
