@@ -19,7 +19,7 @@
 
 # you may not place bash commands before the last SBATCH directive
 module use /opt/insy/modulefiles
-module load cuda/10.0 cudnn/10.0-7.6.0.64
+module load cuda/11.2 cudnn/11.2-8.1.1.33
 module list
 
 cd /home/nfs/mkrcek
