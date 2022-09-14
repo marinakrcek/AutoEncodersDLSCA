@@ -17,10 +17,15 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 sys.path.append("/home/nfs/mkrcek/AutoEncodersDLSCA")
 
 if __name__ == "__main__":
-
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    print('GPUs:', gpus)
+    # from tensorflow.python.client import device_lib
+    # print(device_lib.list_local_devices())
+    # if tf.test.gpu_device_name():
+    #     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
     dataset_name = sys.argv[1]
     model_type = sys.argv[2]
-    leakage_model = sys.argv[3]
+    leakage_model = 'HW'
     # trace_folder = "./datasets"
     trace_folder = "/home/nfs/mkrcek/datasets"
     # folder_results = f"./{model_type}/"
@@ -76,12 +81,14 @@ if __name__ == "__main__":
             else autoencoder_mlp(hp_values['latent_dim'], dataset.ns, hp_values)
 
         """ Train model """
-        model, history = train_ae_model(autoencoder, dataset, dataset_parameters["epochs"], hp_values["batch_size"])
+        model, history = train_ae_model(autoencoder, dataset, dataset_parameters['epochs'], hp_values["batch_size"])
 
         """ Get some predictions for MSE """
         from sklearn.metrics import mean_squared_error
 
         predictions = model.predict(dataset.x_attack)
+        if model_type.endswith('cnn'):
+            dataset.x_attack = np.reshape(dataset.x_attack, (dataset.x_attack.shape[0], dataset.x_attack.shape[1]))
         mse_ds = mean_squared_error(dataset.x_attack, predictions)
         # print(mse_ds)
         mse = np.square(dataset.x_attack - predictions)
