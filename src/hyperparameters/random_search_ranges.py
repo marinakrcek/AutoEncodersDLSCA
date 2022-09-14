@@ -40,17 +40,16 @@ def hp_list(model_type):
             "latent_dim": [20, 100, 500], #[25, 50, 100, 150, 200, 300, 400, 500],
             "optimizer": [Adam, RMSprop, SGD, Adagrad], #, Adamax, Adadelta]
         }
-
     else: #model_type == "ae_cnn":
         hp = {
             "batch_size": [100, 200, 400],
-            "filters": [4, 8], #, 12, 16],
-            "kernel_size": [10], #, 20, 30, 40],
+            "filters": [4, 8, 16],
+            "kernel_size": [10, 20], #, 30, 40],
             "strides": [5, 10], #, 15, 20],
-            "pool_size": [2],
-            "pool_strides": [2],
+            "pool_size": [2, 4],
+            "pool_strides": [2, 4],
             "conv_layers": [1, 2, 3, 4],
-            "activation": ["selu", "tanh", "sigmoid"],
+            "activation": ["tanh", "elu", "selu", "sigmoid"],
             "learning_rate": [0.005, 0.001, 0.0001, 0.00001],
             "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal",
                             "glorot_normal"],
@@ -64,3 +63,4 @@ def hp_list(model_type):
 
     hp_id = np.random.randint(len(search_hp_combinations))
     return search_hp_combinations[hp_id]
+

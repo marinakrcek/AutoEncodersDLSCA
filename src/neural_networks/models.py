@@ -70,12 +70,12 @@ def encoder_cnn(n_outputs, number_of_samples, hp):
     x = Conv1D(hp['filters'], hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
                kernel_initializer=hp['weight_init'],
                padding='same')(input_layer)
-    x = BatchNormalization()(x)
+    # x = BatchNormalization()(x)
     x = MaxPooling1D(hp['pool_size'], strides=hp['pool_strides'], padding='same')(x)
     for l_i in range(1, hp["conv_layers"]):
-        x = Conv1D(hp['filters'] * (l_i + 1), hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
+        x = Conv1D(hp['filters'] * (2 **l_i), hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
                    kernel_initializer=hp['weight_init'], padding='same')(x)
-        x = BatchNormalization()(x)
+        # x = BatchNormalization()(x)
         x = MaxPooling1D(hp['pool_size'], strides=hp['pool_strides'], padding='same')(x)
 
     x = Flatten()(x)
@@ -86,23 +86,41 @@ def encoder_cnn(n_outputs, number_of_samples, hp):
 def decoder_cnn(n_outputs, number_of_samples, hp):
     input_shape = (number_of_samples, 1)
     input_layer = Input(shape=input_shape, name="input_layer_latent_space")
-    # Reshape(target_shape=(hp['filters']))
     tf.random.set_seed(hp["seed"])
-    x = Conv1DTranspose((hp["conv_layers"] + 1) * hp['filters'], hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
+    x = UpSampling1D(hp['pool_size'])(input_layer)
+    x = Conv1D(hp['filters'], hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
                kernel_initializer=hp['weight_init'],
-               padding='same')(input_layer)
-    x = BatchNormalization()(x)
-    x = UpSampling1D(hp['pool_size'])(x)
-    for l_i in range(hp["conv_layers"], 1, -1):
-        x = Conv1DTranspose(hp['filters'] * (l_i), hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
-                   kernel_initializer=hp['weight_init'], padding='same')(x)
-        x = BatchNormalization()(x)
+               padding='same')(x)
+    # x = BatchNormalization()(x)
+    for l_i in range(1, hp["conv_layers"]):
         x = UpSampling1D(hp['pool_size'])(x)
+        x = Conv1D(hp['filters'] * (2**l_i), hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
+                   kernel_initializer=hp['weight_init'], padding='same')(x)
+        # x = BatchNormalization()(x)
 
     x = Flatten()(x)
     output_layer = Dense(n_outputs, activation=None, name=f'decoded')(x)
     return Model(input_layer, output_layer, name='cnn_decoder')
 
+
+# def decoder_cnn(n_outputs, number_of_samples, hp):
+#     input_shape = (number_of_samples, 1)
+#     input_layer = Input(shape=input_shape, name="input_layer_latent_space")
+#     tf.random.set_seed(hp["seed"])
+#     x = UpSampling1D(hp['pool_size'])(input_layer)
+#     x = Conv1DTranspose((2**(hp["conv_layers"] - 1)) * hp['filters'], hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
+#                kernel_initializer=hp['weight_init'],
+#                padding='same')(input_layer)
+#     # x = BatchNormalization()(x)
+#     for l_i in range(hp["conv_layers"]-2, -1, -1):
+#         x = UpSampling1D(hp['pool_size'])(x)
+#         x = Conv1DTranspose(hp['filters'] * (2**l_i), hp['kernel_size'], strides=hp['strides'], activation=hp['activation'],
+#                    kernel_initializer=hp['weight_init'], padding='same')(x)
+#         # x = BatchNormalization()(x)
+#
+#     x = Flatten()(x)
+#     output_layer = Dense(n_outputs, activation=None, name=f'decoded')(x)
+#     return Model(input_layer, output_layer, name='cnn_decoder')
 
 def encoder_mlp(n_outputs, number_of_samples, hp):
     input_shape = (number_of_samples)
@@ -159,6 +177,8 @@ def autoencoder_cnn(latent_dim, number_of_samples, hp):
     model = Model(input_layer, decoder(encoder(input_layer)))
     optimizer = hp['optimizer'](learning_rate=hp['learning_rate'])
     model.compile(loss='mse', optimizer=optimizer, metrics=['mse'])
+    encoder.summary()
+    decoder.summary()
     return encoder, decoder, model
 
 
