@@ -26,7 +26,7 @@ cd /home/nfs/mkrcek
 source venv/bin/activate
 cd /home/nfs/mkrcek/AutoEncodersDLSCA
 
-srun python script_search.py $1 $2 $3
+srun python script_search.py $1 $2
 exit 0
 
 
