@@ -68,7 +68,7 @@ if __name__ == "__main__":
     labels_key_guess = dataset.labels_key_hypothesis_attack
 
     """ Run random search """
-    for search_index in range(2):
+    for search_index in range(10):
         """ generate hyperparameters """
         hp_values = hp_list(model_type)
         hp_values["seed"] = np.random.randint(1048576)
