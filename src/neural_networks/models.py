@@ -27,7 +27,7 @@ def mlp(classes, number_of_samples, hp):
     output_layer = Dense(classes, activation='softmax', name=f'output')(x)
 
     m_model = Model(input_layer, output_layer, name='mlp_softmax')
-    optimizer = Adam(learning_rate=hp['learning_rate'])
+    optimizer = hp['optimizer'](learning_rate=hp['learning_rate'])
     m_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     m_model.summary()
     return m_model
@@ -57,7 +57,7 @@ def cnn(classes, number_of_samples, hp):
     output_layer = Dense(classes, activation='softmax', name=f'output')(x)
 
     m_model = Model(input_layer, output_layer, name='cnn_softmax')
-    optimizer = Adam(learning_rate=hp['learning_rate'])
+    optimizer = hp['optimizer'](learning_rate=hp['learning_rate'])
     m_model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     m_model.summary()
     return m_model
@@ -166,6 +166,8 @@ def autoencoder_mlp(latent_dim, number_of_samples, hp):
     model = Model(input_layer, decoder(encoder(input_layer)))
     optimizer = hp['optimizer'](learning_rate=hp['learning_rate'])
     model.compile(loss='mse', optimizer=optimizer, metrics=['mse'])
+    encoder.summary()
+    decoder.summary()
     return encoder, decoder, model
 
 

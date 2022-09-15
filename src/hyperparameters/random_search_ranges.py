@@ -12,6 +12,7 @@ def hp_list(model_type):
             "activation": ["elu", "selu", "relu"],
             "learning_rate": [0.005, 0.0025, 0.001, 0.0005, 0.00025, 0.0001, 0.00005, 0.000025, 0.00001],
             "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal", "glorot_normal"],
+            "optimizer": [Adam, RMSprop, SGD, Adagrad],  # , Adamax, Adadelta]
         }
     elif model_type == "cnn":
         hp = {
@@ -23,22 +24,23 @@ def hp_list(model_type):
             "strides": [5, 10, 15, 20],
             "pool_size": [2],
             "pool_strides": [2],
-            "conv_layers": [1, 2, 3, 4],
+            "conv_layers": [1, 2, 3, 4, 5],
             "activation": ["elu", "selu", "relu"],
             "learning_rate": [0.005, 0.0025, 0.001, 0.0005, 0.00025, 0.0001, 0.00005, 0.000025, 0.00001],
-            "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal", "glorot_normal"]
+            "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal", "glorot_normal"],
+            "optimizer": [Adam, RMSprop, SGD, Adagrad],
         }
     elif model_type == "ae_mlp":
         hp = {
             "layers": [1, 2, 3, 4, 5, 6],
-            "neurons": [20, 40, 100, 250],
+            "neurons": [20, 50, 100, 250],
             "batch_size": [100, 200, 400],
             "activation": ["tanh", "elu", "selu", "sigmoid"],
             "learning_rate": [0.005, 0.001, 0.0001, 0.00001],
             "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal",
                             "glorot_normal"],
-            "latent_dim": [20, 100, 500], #[25, 50, 100, 150, 200, 300, 400, 500],
-            "optimizer": [Adam, RMSprop, SGD, Adagrad], #, Adamax, Adadelta]
+            "optimizer": [Adam, RMSprop, SGD, Adagrad],
+            "latent_dim": [20, 100, 500],
         }
     else: #model_type == "ae_cnn":
         hp = {
@@ -53,8 +55,8 @@ def hp_list(model_type):
             "learning_rate": [0.005, 0.001, 0.0001, 0.00001],
             "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal",
                             "glorot_normal"],
-            "latent_dim": [20, 100, 500], #[25, 50, 100, 150, 200, 300, 400, 500],
-            "optimizer": [Adam, RMSprop, SGD, Adagrad] #, Adamax, Adadelta]
+            "optimizer": [Adam, RMSprop, SGD, Adagrad],
+            "latent_dim": [20, 100, 500],
         }
 
     keys, value = zip(*hp.items())

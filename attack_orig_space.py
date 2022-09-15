@@ -89,6 +89,7 @@ if __name__ == "__main__":
 
         """ Save results """
         new_filename = get_filename(folder_results, dataset_name, model_type, leakage_model,)
+        hp_values['optimizer'] = hp_values['optimizer'].__name__
         np.savez(new_filename,
                  GE=GE,
                  NT=NT,
