@@ -40,7 +40,7 @@ def hp_list(model_type):
             "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal",
                             "glorot_normal"],
             "optimizer": [Adam, RMSprop, SGD, Adagrad],
-            "latent_dim": [20, 100, 500],
+            # "latent_dim": [20, 100, 500],
         }
     else: #model_type == "ae_cnn":
         hp = {
@@ -56,7 +56,7 @@ def hp_list(model_type):
             "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal",
                             "glorot_normal"],
             "optimizer": [Adam, RMSprop, SGD, Adagrad],
-            "latent_dim": [20, 100, 500],
+            # "latent_dim": [20, 100, 500],
         }
 
     keys, value = zip(*hp.items())

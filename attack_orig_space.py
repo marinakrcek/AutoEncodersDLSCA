@@ -21,6 +21,7 @@ if __name__ == "__main__":
     dataset_name = sys.argv[1]
     model_type = sys.argv[2]
     leakage_model = sys.argv[3]
+    runs = int(sys.argv[4])
     # trace_folder = "./datasets"
     trace_folder = "/home/nfs/mkrcek/datasets"
     # folder_results = f"./{model_type}/"
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     labels_key_guess = dataset.labels_key_hypothesis_attack
 
     """ Run random search """
-    for search_index in range(10):
+    for search_index in range(runs):
         """ generate hyperparameters """
         hp_values = hp_list(model_type)
         hp_values["seed"] = np.random.randint(1048576)

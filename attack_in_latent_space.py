@@ -22,6 +22,7 @@ if __name__ == "__main__":
     model_type = sys.argv[2]
     leakage_model = sys.argv[3]
     ae_model = sys.argv[4]
+    runs = int(sys.argv[5])
     # trace_folder = "./datasets"
     trace_folder = "/home/nfs/mkrcek/datasets"
     # folder_results = f"./{model_type}/"
@@ -77,7 +78,7 @@ if __name__ == "__main__":
     nb_test_samples = latent_x_attack.shape[0]
 
     """ Run random search """
-    for search_index in range(10):
+    for search_index in range(runs):
         """ generate hyperparameters """
         hp_values = hp_list(model_type)
         hp_values["seed"] = np.random.randint(1048576)

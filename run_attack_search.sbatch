@@ -15,7 +15,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=1500MB
 #SBATCH --gres=gpu
-#SBATCH --mail-type=END
+#SBATCH --mail-type=END,FAIL
 
 # you may not place bash commands before the last SBATCH directive
 module use /opt/insy/modulefiles
@@ -26,7 +26,7 @@ cd /home/nfs/mkrcek
 source venv/bin/activate
 cd /home/nfs/mkrcek/AutoEncodersDLSCA
 
-srun python attack_in_latent_space.py $1 $2 $3 $4
+srun python attack_in_latent_space.py $1 $2 $3 $4 $5
 exit 0
 
 

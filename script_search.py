@@ -25,6 +25,8 @@ if __name__ == "__main__":
     #     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
     dataset_name = sys.argv[1]
     model_type = sys.argv[2]
+    latent_dim = int(sys.argv[3])
+    runs = int(sys.argv[4])
     leakage_model = 'HW'
     # trace_folder = "./datasets"
     trace_folder = "/home/nfs/mkrcek/datasets"
@@ -70,10 +72,11 @@ if __name__ == "__main__":
     dataset.rescale(True if model_type.endswith("cnn") else False)
 
     """ Run random search """
-    for search_index in range(10):
+    for search_index in range(runs):
         """ generate hyperparameters """
         hp_values = hp_list(model_type)
         hp_values["seed"] = np.random.randint(1048576)
+        hp_values['latent_dim'] = latent_dim
         print(hp_values)
 
         """ Create model """
