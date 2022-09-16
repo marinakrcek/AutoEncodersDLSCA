@@ -3,9 +3,9 @@ import numpy as np
 import sys
 
 model_type = "mlp"
-folder_results = f"./{model_type}_orig"
-dataset_name = "ascad-variable"
-leakage_model = "ID"
+folder_results = f"./attack-{model_type}-ae-cnn"
+dataset_name = "dpa_v42"
+leakage_model = "HW"
 hiding = ""
 
 GEs = []

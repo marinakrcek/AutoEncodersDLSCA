@@ -9,3 +9,5 @@ __pycache__/
 *.pb
 *.data-*
 *.index
+*.out
+*.xlsx
