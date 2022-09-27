@@ -158,11 +158,60 @@ def decoder_mlp(n_outputs, number_of_samples, hp):
     return m_model
 
 
+def encoder_mlp_dcr(n_outputs, number_of_samples, hp):
+    input_shape = (number_of_samples)
+    input_layer = Input(shape=input_shape, name="input_layer")
+
+    tf.random.set_seed(hp["seed"])
+    architecture = sorted(hp['architecture'], reverse=True)
+    x = Dense(architecture[0], kernel_initializer=hp['weight_init'], activation=hp['activation'], name='fc_1')(
+        input_layer)
+    for l_i in range(1, len(architecture)):
+        x = Dense(architecture[l_i], kernel_initializer=hp['weight_init'], activation=hp['activation'],
+                  name=f'fc_{l_i + 1}')(x)
+
+    output_layer = Dense(n_outputs, activation=None, name=f'latent_space_output')(x)
+
+    m_model = Model(input_layer, output_layer, name='mlp_encoder')
+    return m_model
+
+
+def decoder_mlp_incr(n_outputs, number_of_samples, hp):
+    input_shape = (number_of_samples)
+    input_layer = Input(shape=input_shape, name="input_layer_latent_space")
+
+    tf.random.set_seed(hp["seed"])
+    architecture = sorted(hp['architecture'])
+    x = Dense(architecture[0], kernel_initializer=hp['weight_init'], activation=hp['activation'], name='fc_1')(
+        input_layer)
+    for l_i in range(1, len(architecture)):
+        x = Dense(architecture[l_i], kernel_initializer=hp['weight_init'], activation=hp['activation'],
+                  name=f'fc_{l_i + 1}')(x)
+
+    output_layer = Dense(n_outputs, activation=None, name=f'decoded')(x)
+
+    m_model = Model(input_layer, output_layer, name='mlp_decoder')
+    return m_model
+
+
 def autoencoder_mlp(latent_dim, number_of_samples, hp):
     input_shape = (number_of_samples)
     input_layer = Input(shape=input_shape, name="input_layer")
     encoder = encoder_mlp(latent_dim, number_of_samples, hp)
     decoder = decoder_mlp(number_of_samples, latent_dim, hp)
+    model = Model(input_layer, decoder(encoder(input_layer)))
+    optimizer = hp['optimizer'](learning_rate=hp['learning_rate'])
+    model.compile(loss='mse', optimizer=optimizer, metrics=['mse'])
+    encoder.summary()
+    decoder.summary()
+    return encoder, decoder, model
+
+
+def autoencoder_mlp_dcr(latent_dim, number_of_samples, hp):
+    input_shape = (number_of_samples)
+    input_layer = Input(shape=input_shape, name="input_layer")
+    encoder = encoder_mlp_dcr(latent_dim, number_of_samples, hp)
+    decoder = decoder_mlp_incr(number_of_samples, latent_dim, hp)
     model = Model(input_layer, decoder(encoder(input_layer)))
     optimizer = hp['optimizer'](learning_rate=hp['learning_rate'])
     model.compile(loss='mse', optimizer=optimizer, metrics=['mse'])

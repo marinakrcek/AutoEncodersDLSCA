@@ -80,9 +80,14 @@ if __name__ == "__main__":
         print(hp_values)
 
         """ Create model """
-        encoder, decoder, autoencoder = autoencoder_cnn(hp_values['latent_dim'], dataset.ns, hp_values) if model_type == "ae_cnn" \
-            else autoencoder_mlp(hp_values['latent_dim'], dataset.ns, hp_values)
-
+        if model_type == "ae_mlp":
+            encoder, decoder, autoencoder = autoencoder_mlp(hp_values['latent_dim'], dataset.ns, hp_values)
+        elif model_type == "ae_cnn":
+            encoder, decoder, autoencoder = autoencoder_cnn(hp_values['latent_dim'], dataset.ns, hp_values)
+        elif model_type == "ae_mlp_dcr":
+            encoder, decoder, autoencoder = autoencoder_mlp_dcr(hp_values['latent_dim'], dataset.ns, hp_values)
+        else:
+            raise ValueError(f"wrong model type {model_type}")
         """ Train model """
         model, history = train_ae_model(autoencoder, dataset, dataset_parameters['epochs'], hp_values["batch_size"])
 

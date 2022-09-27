@@ -42,7 +42,7 @@ def hp_list(model_type):
             "optimizer": [Adam, RMSprop, SGD, Adagrad],
             # "latent_dim": [20, 100, 500],
         }
-    else: #model_type == "ae_cnn":
+    elif model_type == "ae_cnn":
         hp = {
             "batch_size": [100, 200, 400],
             "filters": [4, 8, 16],
@@ -58,6 +58,22 @@ def hp_list(model_type):
             "optimizer": [Adam, RMSprop, SGD, Adagrad],
             # "latent_dim": [20, 100, 500],
         }
+    elif model_type =="ae_mlp_dcr":
+        nb_layers = np.random.choice([1, 2, 3, 4, 5, 6])
+        neurons = np.array([20, 40, 50, 100, 150, 200, 300, 400])
+        architecture = sorted(np.random.choice(neurons, nb_layers))
+
+        hp = {
+            "architecture": [architecture],
+            "batch_size": [100, 200, 400],
+            "activation": ["tanh", "elu", "selu", "sigmoid"],
+            "learning_rate": [0.005, 0.001, 0.0001, 0.00001],
+            "weight_init": ["random_uniform", "he_uniform", "glorot_uniform", "random_normal", "he_normal",
+                            "glorot_normal"],
+            "optimizer": [Adam, RMSprop, SGD, Adagrad],
+        }
+    else:
+        raise ValueError(f"wrong model type {model_type}")
 
     keys, value = zip(*hp.items())
     search_hp_combinations = [dict(zip(keys, v)) for v in itertools.product(*value)]
