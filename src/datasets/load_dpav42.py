@@ -83,11 +83,11 @@ class ReadDPAV42:
         self.y_attack = to_categorical(self.attack_labels, num_classes=self.classes)
 
         self.labels_key_hypothesis_attack = self.create_labels_key_guess(attack_plaintexts, self.round_key_attack)
-        # self.share1_profiling, self.share2_profiling, self.share1_attack, self.share2_attack = self.create_shares(profiling_plaintext,
-        #                                                                                                           profiling_masks,
-        #                                                                                                           profiling_key,
-        #                                                                                                           attack_plaintext,
-        #                                                                                                           attack_key, attack_masks)
+        self.share1_profiling, self.share2_profiling, self.share1_attack, self.share2_attack = self.create_shares(profiling_plaintext,
+                                                                                                                  profiling_masks,
+                                                                                                                  profiling_key,
+                                                                                                                  attack_plaintext,
+                                                                                                                  attack_key, attack_masks)
 
     def rescale(self, reshape_to_cnn):
         scaler = StandardScaler()
@@ -122,7 +122,7 @@ class ReadDPAV42:
 
     def create_shares(self, profiling_plaintext, profiling_masks, profiling_key, attack_plaintext, attack_key, attack_masks):
         mask = [3, 12, 53, 58, 80, 95, 102, 105, 150, 153, 160, 175, 197, 202, 243, 252]
-        mask_substitution = np.zeros(256)
+        mask_substitution = np.zeros(256, dtype=int)
         m = 0
         for i in range(256):
             if i == mask[m]:

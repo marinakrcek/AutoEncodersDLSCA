@@ -82,11 +82,11 @@ class ReadASCADr:
         self.y_attack = to_categorical(self.attack_labels, num_classes=self.classes)
 
         self.labels_key_hypothesis_attack = self.create_labels_key_guess(attack_plaintexts)
-        # self.share1_profiling, self.share2_profiling, self.share1_attack, self.share2_attack = self.create_shares(profiling_plaintext,
-        #                                                                                                           profiling_masks,
-        #                                                                                                           profiling_key,
-        #                                                                                                           attack_plaintext,
-        #                                                                                                           attack_key, attack_masks)
+        self.share1_profiling, self.share2_profiling, self.share1_attack, self.share2_attack = self.create_shares(profiling_plaintext,
+                                                                                                                  profiling_masks,
+                                                                                                                  profiling_key,
+                                                                                                                  attack_plaintext,
+                                                                                                                  attack_key, attack_masks)
         # self.share1_profiling, self.share2_profiling, self.share1_attack, self.share2_attack = self.create_intermediates(
         #     profiling_plaintext,
         #     profiling_masks,

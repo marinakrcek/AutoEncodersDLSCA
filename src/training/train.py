@@ -34,8 +34,8 @@ def train_ae_model(model, dataset, epochs, batch_size):
     # does not use attack data for validation
     valid_set_size = len(dataset.y_attack)
     history = model.fit(
-            x=dataset.x_profiling[valid_set_size:],
-            y=dataset.x_profiling[valid_set_size:],
+            x=dataset.x_profiling,
+            y=dataset.x_profiling,
             batch_size=batch_size,
             verbose=2,
             epochs=epochs,
@@ -47,8 +47,8 @@ def train_ae_model(model, dataset, epochs, batch_size):
 
 def train_ds_diff(model, x_train, y_train, epochs, batch_size, valid_set_size):
     history = model.fit(
-        x=x_train[valid_set_size:],
-        y=y_train[valid_set_size:],
+        x=x_train,
+        y=y_train,
         batch_size=batch_size,
         verbose=2,
         epochs=epochs,

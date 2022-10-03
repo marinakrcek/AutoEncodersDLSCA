@@ -13,7 +13,6 @@ import gc
 import os
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
-# sys.path.append("C:\\Users\\mkrcek\\Documents\\PhDTUDelft\\source_code\\sca-autoencoders\\AutoEncodersDLSCA")
 sys.path.append("/home/nfs/mkrcek/AutoEncodersDLSCA")
 
 if __name__ == "__main__":
@@ -74,7 +73,7 @@ if __name__ == "__main__":
     """ Run random search """
     for search_index in range(runs):
         """ generate hyperparameters """
-        hp_values = hp_list(model_type)
+        hp_values = hp_list(model_type, latent_dim=latent_dim)
         hp_values["seed"] = np.random.randint(1048576)
         hp_values['latent_dim'] = latent_dim
         print(hp_values)
@@ -84,7 +83,7 @@ if __name__ == "__main__":
             encoder, decoder, autoencoder = autoencoder_mlp(hp_values['latent_dim'], dataset.ns, hp_values)
         elif model_type == "ae_cnn":
             encoder, decoder, autoencoder = autoencoder_cnn(hp_values['latent_dim'], dataset.ns, hp_values)
-        elif model_type == "ae_mlp_dcr":
+        elif model_type == "ae_mlp_dcr" or model_type == "ae_mlp_str_dcr":
             encoder, decoder, autoencoder = autoencoder_mlp_dcr(hp_values['latent_dim'], dataset.ns, hp_values)
         else:
             raise ValueError(f"wrong model type {model_type}")
@@ -101,6 +100,38 @@ if __name__ == "__main__":
         # print(mse_ds)
         mse = np.square(dataset.x_attack - predictions)
 
+        # because dataset is with HW leakage model
+        possibilities = 9
+        snr_orig = CalculateSNR(dataset.x_attack, dataset.share2_attack, possibilities)
+        snr_pred = CalculateSNR(predictions, dataset.share2_attack, possibilities)
+        encoded_data = np.array(encoder(dataset.x_attack))
+        snr_encd = CalculateSNR(encoded_data, dataset.share2_attack, possibilities)
+
+        mask_possibilities = len(np.unique(dataset.share1_attack))
+        snr_orig_mask = CalculateSNR(dataset.x_attack, dataset.share1_attack, mask_possibilities)
+        snr_pred_mask = CalculateSNR(predictions, dataset.share1_attack, mask_possibilities)
+        snr_encd_mask = CalculateSNR(encoded_data, dataset.share1_attack, mask_possibilities)
+        snr_HW = {'snr_orig': snr_orig, 'snr_pred': snr_pred, 'snr_encd': snr_encd, 'snr_orig_mask': snr_orig_mask,
+                  'snr_pred_mask': snr_pred_mask, 'snr_encd_mask': snr_encd_mask}
+
+        datasetID = class_name(
+            dataset_parameters["n_profiling"],
+            dataset_parameters["n_attack"],
+            file_path=get_dataset_filepath(trace_folder, dataset_name, dataset_parameters["npoi"]),
+            target_byte=dataset_parameters["target_byte"],
+            leakage_model='ID',
+            first_sample=0,
+            number_of_samples=dataset_parameters["npoi"]
+        )
+        datasetID.rescale(False)
+        # same for when dataset is with leakage model ID
+        possibilities = 256
+        snr_orig = CalculateSNR(datasetID.x_attack, datasetID.share2_attack, possibilities)
+        snr_pred = CalculateSNR(predictions, datasetID.share2_attack, possibilities)
+        encoded_data = np.array(encoder(datasetID.x_attack))
+        snr_encd = CalculateSNR(encoded_data, datasetID.share2_attack, possibilities)
+        snr_ID = {'snr_orig': snr_orig, 'snr_pred': snr_pred, 'snr_encd': snr_encd}
+
         smse = np.sum(mse, axis=1)
         lowest_mse_i = np.argmin(smse)
         orig_data = dataset.x_attack[lowest_mse_i]
@@ -116,7 +147,9 @@ if __name__ == "__main__":
                  best_pred=pred,
                  hp_values=hp_values,
                  history=history.history,
-                 dataset=dataset_parameters
+                 dataset=dataset_parameters,
+                 snr_HW=snr_HW,
+                 snr_ID=snr_ID
                  )
         encoder.save(new_filename[:-4])
         del model
