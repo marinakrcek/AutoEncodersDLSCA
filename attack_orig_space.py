@@ -1,5 +1,6 @@
 import sys
 from src.datasets.load_ascadr import *
+from src.datasets.load_ascadf import *
 from src.datasets.load_dpav42 import *
 from src.preprocess.generate_hiding_coutermeasures import *
 from src.neural_networks.models import *
@@ -13,7 +14,6 @@ import gc
 import os
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
-# sys.path.append("C:\\Users\\mkrcek\\Documents\\PhDTUDelft\\source_code\\sca-autoencoders\\AutoEncodersDLSCA")
 sys.path.append("/home/nfs/mkrcek/AutoEncodersDLSCA")
 
 if __name__ == "__main__":
@@ -50,6 +50,16 @@ if __name__ == "__main__":
             "epochs": 100
         }
         class_name = ReadASCADr
+    if dataset_name == "ascadf":
+        dataset_parameters = {
+            "n_profiling": 50000,
+            "n_attack": 5000,
+            "n_attack_ge": 3000,
+            "target_byte": 2,
+            "npoi": 700,
+            "epochs": 100
+        }
+        class_name = ReadASCADf
 
     """ Create dataset """
     dataset = class_name(
@@ -99,6 +109,6 @@ if __name__ == "__main__":
                  history=history.history,
                  dataset=dataset_parameters
                  )
-
+        model.save(new_filename[:-4])
         del model
         gc.collect()

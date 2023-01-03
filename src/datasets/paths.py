@@ -9,6 +9,9 @@ def get_dataset_filepath(trace_folder, dataset_name, npoi):
         },
         "ascadv2": {
             1000: f"{trace_folder}/ascadv2-extracted.h5",
+        },
+        "ascadf": {
+            700: f"{trace_folder}/ascad-fixed.h5",
         }
     }
 
