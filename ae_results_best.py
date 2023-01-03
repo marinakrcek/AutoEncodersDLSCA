@@ -3,9 +3,16 @@ import numpy as np
 import sys
 from collections import defaultdict
 
-model_type = "ae_cnn"
-folder_results = f"./{model_type}_100_runs"
-dataset_name = "dpa_v42"
+model_type = "ae_mlp_str_dcr"
+# folder_results = f"./{model_type}_latent_20_runs_per_z_size"
+# folder_results = f"./{model_type}_100_runs"
+# folder_results = f"./{model_type}_700"
+# folder_results = f"./{model_type}_TC_CMA"
+folder_results = f"./{model_type}_only_400"
+# folder_results = f"/tudelft.net/staff-bulk/ewi/insy/CYS/mkrcek/{model_type}_1400"
+# dataset_name = "dpa_v42"
+# dataset_name = "ascad-variable"
+dataset_name = "ascadf"
 leakage_model = "HW"
 hiding = ""
 
@@ -13,17 +20,16 @@ mses = []
 files = []
 
 info = defaultdict(list)
-for file_id in range(0, 9):
+for file_id in range(0, 100):
     filepath = f"{folder_results}/{dataset_name}_{model_type}_{leakage_model}{hiding}_{file_id+1}.npz"
     npz_file = np.load(filepath, allow_pickle=True)
     mse_ds = npz_file["mse_ds"].item()
     mses.append(mse_ds)
     files.append(filepath)
     hp_values = npz_file['hp_values'].item()
-    print(hp_values, mse_ds)
+    # print(hp_values, mse_ds)
     # print(filepath, mse_ds)
     info[hp_values['latent_dim']].append([filepath, mse_ds])
-
 
 best = np.min(mses)
 best_i = np.argmin(mses)
@@ -77,12 +83,17 @@ plt.clf()
 ls_sizes = sorted(list(info.keys()))
 for_plot = []
 x_ticks = []
+print('latent_dim\tmin\tmean\tmedian\tmax')
 for ls_s in ls_sizes:
     mses = [ii[1] for ii in info[ls_s]]
+    # mses = mses[:20]
     for_plot.append(mses)
     x_ticks.append(f"{ls_s} ({len(mses)})")
+    print(f'{ls_s}\t{np.min(mses)}\t{np.mean(mses)}\t{np.median(mses)}\t{np.max(mses)}')
+
 plt.boxplot(for_plot)
 plt.grid(True, which="both", ls="-")
+plt.title(f"{model_type} {dataset_name}")
 plt.xlabel("Latent space sizes", fontsize=12)
 plt.ylabel("MSE", fontsize=12)
 plt.xticks(range(1, len(ls_sizes)+1), x_ticks)

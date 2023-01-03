@@ -13,7 +13,6 @@ import gc
 import os
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
-# sys.path.append("C:\\Users\\mkrcek\\Documents\\PhDTUDelft\\source_code\\sca-autoencoders\\AutoEncodersDLSCA")
 sys.path.append("/home/nfs/mkrcek/AutoEncodersDLSCA")
 
 if __name__ == "__main__":
@@ -23,10 +22,10 @@ if __name__ == "__main__":
     leakage_model = sys.argv[3]
     ae_model = sys.argv[4]
     runs = int(sys.argv[5])
-    # trace_folder = "./datasets"
-    trace_folder = "/home/nfs/mkrcek/datasets"
-    # folder_results = f"./{model_type}/"
-    folder_results = f"/home/nfs/mkrcek/{model_type}"
+    home_folder = "."
+    # home_folder = "/tudelft.net/staff-bulk/ewi/insy/CYS/mkrcek"
+    trace_folder = f"{home_folder}/datasets"
+    ae_model_file = f"{home_folder}/{ae_model}"
 
     dataset_parameters = None
     class_name = None
@@ -70,12 +69,18 @@ if __name__ == "__main__":
     labels_key_guess = dataset.labels_key_hypothesis_attack
 
     """ load encoder to create dataset in latent space """
-    encoder = load_model(ae_model)
+
+    encoder = load_model(ae_model_file)
     # get the dataset in latent space
     latent_x_profiling = encoder.predict(dataset.x_profiling)
     nb_train_samples, nb_features = latent_x_profiling.shape
     latent_x_attack = encoder.predict(dataset.x_attack)
     nb_test_samples = latent_x_attack.shape[0]
+    ae_model_name = ae_model[:ae_model.find(f"_{nb_features}")]
+    folder_results = f"{home_folder}/{model_type}_{ae_model_name}_{nb_features}"
+    scaler = StandardScaler()
+    latent_x_profiling = scaler.fit_transform(latent_x_profiling)
+    latent_x_attack = scaler.transform(latent_x_attack)
 
     """ Run random search """
     for search_index in range(runs):

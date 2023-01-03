@@ -28,10 +28,11 @@ if __name__ == "__main__":
     latent_dim = int(sys.argv[3])
     runs = int(sys.argv[4])
     leakage_model = 'HW'
-    # trace_folder = "./datasets"
-    trace_folder = "/home/nfs/mkrcek/datasets"
-    # folder_results = f"./{model_type}/"
-    folder_results = f"/home/nfs/mkrcek/{model_type}"
+    trace_folder = "./datasets"
+    # trace_folder = "/tudelft.net/staff-bulk/ewi/insy/CYS/mkrcek/datasets"
+    folder_results = f"./{model_type}/"
+    # folder_results = f"/tudelft.net/staff-bulk/ewi/insy/CYS/mkrcek/{model_type}_{str(latent_dim)}"
+    # folder_results = f"/tudelft.net/staff-bulk/ewi/insy/CYS/mkrcek/{model_type}_only_400"
 
     dataset_parameters = None
     class_name = None

@@ -23,9 +23,9 @@ if __name__ == "__main__":
     leakage_model = sys.argv[3]
     runs = int(sys.argv[4])
     # trace_folder = "./datasets"
-    trace_folder = "/home/nfs/mkrcek/datasets"
+    trace_folder = "/tudelft.net/staff-bulk/ewi/insy/CYS/mkrcek/datasets"
     # folder_results = f"./{model_type}/"
-    folder_results = f"/home/nfs/mkrcek/{model_type}_orig"
+    folder_results = f"/tudelft.net/staff-bulk/ewi/insy/CYS/mkrcek/hyperparams_1/{model_type}_orig"
 
     dataset_parameters = None
     class_name = None

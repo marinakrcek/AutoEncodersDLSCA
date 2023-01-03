@@ -2,18 +2,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
-model_type = "mlp"
-folder_results = f"./{model_type}"
-dataset_name = "dpa_v42"
-leakage_model = "HW"
+model_type = "cnn"
+folder_results = f"./{model_type}_orig_100_runs"
+dataset_name = "ascad-variable"
+leakage_model = "ID"
 hiding = ""
-
+nb_runs = 100
 best_mse = sys.float_info.max
 best_AE = None
 best_file = None
 figure = plt.gcf()
 figure.set_size_inches(5, 4)
-for file_id in range(0, 10):
+for file_id in range(0, nb_runs):
     filepath = f"{folder_results}/{dataset_name}_{model_type}_{leakage_model}{hiding}_{file_id+1}.npz"
     npz_file = np.load(filepath, allow_pickle=True)
     guessing_entropy = npz_file["GE"]
@@ -28,7 +28,7 @@ for file_id in range(0, 10):
 plt.grid(True, which="both", ls="-")
 plt.xlabel("Traces", fontsize=12)
 plt.ylabel("Guessing Entropy", fontsize=12)
-plt.ylim(0, 210)
+plt.ylim(0, 256)
 plt.tight_layout()
 plt.savefig(f"{folder_results}/{dataset_name}_{model_type}_{leakage_model}{hiding}.png",dpi=300, bbox_inches='tight')
 plt.close()
